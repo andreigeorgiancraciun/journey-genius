@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JourneyGenius - Homepage</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles.css">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Font Awesome pentru pictograme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-image: url('https://funtravel.ro/wp-content/uploads/2022/03/Franta-Paris-Fun-Travel-Agency-08.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+<!-- Include Header Fragment -->
+<div th:replace="fragments/header :: header(requestURI=${requestURI})"></div>
+
+<!-- Formularul pentru căutarea călătoriei -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center mb-4">Planifică-ți următoarea aventură</h2>
+            <form action="#" th:action="@{/submit}" th:object="${travelForm}" method="post">
+                <div class="form-group">
+                    <label for="startDate">Data de început a călătoriei:</label>
+                    <input class="form-control" type="date" id="startDate" th:field="*{startDate}" required><br><br>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Data de sfârșit a călătoriei:</label>
+                    <input class="form-control" type="date" id="endDate" th:field="*{endDate}" required><br><br>
+                </div>
+
+                <div class="form-group">
+                    <label for="destination">Destinație:</label>
+                    <input class="form-control" type="text" id="destination" name="destination"
+                           th:field="*{destination}" required><br><br>
+                </div>
+                <!-- Alte câmpuri pentru alte detalii despre călătorie -->
+
+                <button type="submit" class="btn btn-primary btn-block">Caută</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Include Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    $(function () {
+        $("#destination").autocomplete({
+            source: function (request, response) {
+                const inputText = $("#destination").val();
+                $.ajax({
+                    url: 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(inputText),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        const suggestions = [];
+                        $.each(data, function (index, item) {
+                            suggestions.push(item.display_name);
+                        });
+                        response(suggestions);
+                    },
+                    error: function (error) {
+                        console.error('Eroare la obținerea sugestiilor de locație:', error);
+                    }
+                });
+            },
+            minLength: 2
+        });
+    });
+</script>
+</body>
+</html>

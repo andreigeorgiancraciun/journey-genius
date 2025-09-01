@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles.css">
+    <!-- CSS Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        html {
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0; /* Remove scrollbar space */
+            background: transparent; /* Optional: just make scrollbar invisible */
+        }
+
+        /* Optional: show position indicator in red */
+        ::-webkit-scrollbar-thumb {
+            background: #FF0000;
+        }
+    </style>
+</head>
+<body>
+<!-- Include Header Fragment -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div id="contentToDownload" class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Informații despre călătorie</h5>
+                    <button class="btn btn-primary mr-3"
+                            onclick="downloadPDF()"
+                            sec:authorize="hasRole('ADMIN') or hasRole('SUPERUSER')">Descarcă PDF</button>
+                    <button class="btn btn-primary"
+                            onclick="openChatModal()"
+                            sec:authorize="hasRole('ADMIN') or hasRole('SUPERUSER')">Chat with JourneyGenius</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <!-- Coloana 1 -->
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-thermometer-sun"></i> Temperatură</h5>
+                    <p class="card-text" th:text="${itinerary.temperature}"></p>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Evenimente locale -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calendar-event"></i> Evenimente locale</h5>
+                    <ul class="card-text">
+                        <li th:each="localEvent : ${itinerary.localEvents}" th:text="${localEvent}"></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Atracții turistice -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-binoculars"></i> Atracții turistice</h5>
+                    <ul class="card-text">
+                        <li th:each="attraction : ${itinerary.attractions}" th:text="${attraction}"></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Restaurante -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-cup-straw"></i> Restaurante</h5>
+                    <ul class="card-text" id="restaurant-list">
+                        <li th:each="restaurant : ${itinerary.restaurants}" th:text="${restaurant}"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Coloana 2 -->
+        <div class="col">
+            <!-- Adăugare icon pentru Moneda locală -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-cash"></i> Moneda locală</h5>
+                    <p class="card-text" th:text="${itinerary.currency}"></p>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Mâncăruri și băuturi tradiționale -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-cup-straw"></i> Mâncăruri și băuturi tradiționale</h5>
+                    <ul class="card-text">
+                        <li th:each="traditionalFood : ${itinerary.traditionalFoods}" th:text="${traditionalFood}"></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Opțiuni de transport -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-airplane-engines"></i> Opțiuni de transport</h5>
+                    <ul class="card-text">
+                        <li th:each="transportOption : ${itinerary.transportationOptions}"
+                            th:text="${transportOption}"></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Adăugare icon pentru Opțiuni de cazare -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-house"></i> Opțiuni de cazare</h5>
+                    <ul class="card-text">
+                        <li th:each="accommodationOption : ${itinerary.accommodationOptions}"
+                            th:text="${accommodationOption}"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card pentru urare -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">O călătorie minunată vă urează JourneyGenius!</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Modal for Chat -->
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chatModalLabel">Chat with JourneyGenius</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Chat content will be loaded here dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Cheia de acces la Unsplash API
+    const accessKey = '2VnO_yYNE1X_KTYNsBcA17poG-i8rapPFvIPSCcqPqQ';
+
+    // Funcția pentru a obține o imagine de fundal bazată pe locație
+    async function getBackgroundImage(location) {
+        try {
+            // Construiește URL-ul cererii către Unsplash API
+            const apiUrl = `https://api.unsplash.com/photos/random?query=${location}&client_id=${accessKey}`;
+
+            // Realizează cererea către API
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            // Obține URL-ul imaginii de fundal din răspunsul API-ului
+            const backgroundImageUrl = data.urls.regular;
+
+            // Setează imaginea de fundal a paginii web
+            document.body.style.backgroundImage = `url('${backgroundImageUrl}')`;
+        } catch (error) {
+            console.error('Eroare la obținerea imaginii de fundal:', error);
+        }
+    }
+
+    // Exemplu de utilizare: obține o imagine de fundal pentru Paris
+    var location1 = /*[[${destination}]]*/ 'Rome,Italy';
+    getBackgroundImage(location1);
+
+    // Funcția pentru a descărca PDF-ul
+    async function downloadPDF() {
+        const {jsPDF} = window.jspdf;
+        const doc = new jsPDF();
+
+        // Selectează conținutul paginii pe care vrei să-l adaugi în PDF
+        const content = document.querySelector('#contentToDownload');
+
+        // Utilizează html2canvas pentru a captura conținutul paginii ca imagine
+        html2canvas(content).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 190; // Adjust width according to your page layout
+            const pageHeight = 285; // Adjust height according to your page layout
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // Adaugă imaginea în PDF
+            doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            // Salvează PDF-ul cu un nume specific
+            doc.save('itinerary.pdf');
+        });
+    }
+
+    // Function to convert URLs in the text to clickable hyperlinks
+    function linkifyText() {
+        const elements = document.querySelectorAll('.card-text li');
+        elements.forEach(element => {
+            let text = element.innerHTML;
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            text = text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+            element.innerHTML = text;
+        });
+    }
+
+    // Function to open chatGPT Modal
+    function openChatModal() {
+        $.ajax({
+            url: '/chat',
+            method: 'GET',
+            success: function (data) {
+                $('#chatModal .modal-body').html(data);
+                $('#chatModal').modal('show');
+            },
+            error: function () {
+                alert('Failed to load chat content.');
+            }
+        });
+    }
+
+    // Call the function to convert URLs after the DOM content is loaded
+    document.addEventListener('DOMContentLoaded', linkifyText);
+    /*]]>*/
+</script>
+</body>
+</html>

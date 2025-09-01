@@ -1,0 +1,72 @@
+.footer-copyright {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.btn {
+    border-radius: 20px;
+}
+
+body {
+    background-color: #f8f9fa;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    position: relative;
+}
+
+.truncate[data-fulltext]:hover::after {
+    content: attr(data-fulltext);
+    white-space: normal;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    position: fixed;
+    z-index: 1000;
+    max-width: 300px;
+    margin-left: 10px;
+    top: auto;
+    left: auto;
+    transform: translateY(-50%);
+    opacity: 1;
+    transition: opacity 0.3s;
+    overflow: visible;
+    display: block;
+}
+
+.truncate[data-fulltext]::after {
+    display: none;
+}
+
+.truncate[data-fulltext]:hover::after {
+    display: block;
+}
+
+.card {
+    opacity: 0.8;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+}

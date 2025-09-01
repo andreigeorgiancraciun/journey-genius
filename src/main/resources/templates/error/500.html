@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Server Error</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- CSS Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<!-- Include Header Fragment -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Există o problemă la procesarea cererii dvs.</h5>
+                    <p>Apasă pe <a th:href="@{/}">Acasă</a> pentru a merge la pagina de pornire.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Footer Fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
